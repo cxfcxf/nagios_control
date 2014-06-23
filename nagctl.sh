@@ -86,7 +86,7 @@ if [ "$EXEC" == "enable" ] || [ "$EXEC" == "disable" ]; then
 			echo "[${NOW}] ${EXEC}_HOST_NOTIFICATIONS;${x}" > $CMD
 			echo "[${NOW}] ${EXEC}_HOST_SVC_NOTIFICATIONS;${x}" > $CMD
 		done
-	elif [ -n "$HOST" ] && [ -n "$SERV" ]; then
+	elif [ -n $HOST ] && [ -n $SERV ]; then
 		HOST=`eval echo $HOST`
 		SERV=`eval echo $SERV`
 		for x in $HOST; do
