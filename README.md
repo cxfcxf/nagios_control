@@ -12,7 +12,7 @@ result output part may not as good as other tool which can access json or print 
 ##### before use:
 change the location in script to wherever your nagios.cmd and status.dat are at
 
-<b>
+```
 ###############################################################################################
 script will disable or enable notification for your hosts or services on nagios
 if only services are pointed, script will use status.dat info to get all hosts 
@@ -34,7 +34,7 @@ notice: you can only use bash regex to discribe your hosts or services
 		host -->> edge{12,13} or edge{12..20}
 		service -->> {Logchute,http,write}  case sensitive
 ###############################################################################################
-</b>
+```
 
 ### future plan:
 
