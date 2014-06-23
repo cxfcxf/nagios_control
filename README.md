@@ -31,8 +31,8 @@ example: nagctl -e list -h hosts
          nagctl -e enable -s services  (this will only take effect on all hosts with OK status)
 
 notice: you can only use bash regex to discribe your hosts or services
-		host -->> edge{12,13} or edge{12..20}
-		service -->> {Logchute,http,write}  case sensitive
+		host -->> "edge{12,13}-dal" or "edge{12..20}-dal" with double quote
+		service -->> "{LOGCHUTE,HTTP,WRITES}  case sensitive
 ###############################################################################################
 ```
 
