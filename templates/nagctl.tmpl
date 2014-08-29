@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+	<title>Nagctl</title>
+
+	<style type="text/css">
+		.formcss{
+			margin: 20px;
+		}
+	</style>
+
+	</head>
+
+	<div class="formcss">
+		<h1>Welcome to Nagctl Webservice<h1>
+
+		<form class="form-inline" rolse="form" method="POST">
+			<div class="form-group">
+    			<label class="sr-only" for="Execution">Exec</label>
+    			<input type="text" name="exec" class="form-control" placeholder="Mute/Unmute">
+  			 </div>
+
+			 <div class="form-group">
+    			<label class="sr-only" for="Hosts">Hosts</label>
+    			<input type="text" name="hosts" class="form-control" placeholder="Enter Hosts">
+  			 </div>
+
+  			<div class="form-group">
+    			<label class="sr-only" for="Services">Services</label>
+    			<input type="text" name="services" class="form-control" placeholder="Enter Services">
+  			</div>
+
+  			<button type="submit" class="btn btn-primary">Submit</button>
+    	</form>
+	</div>
+</html>
