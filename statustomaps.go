@@ -8,7 +8,7 @@ import (
 
 func main() {
 	
-	sdata := nagtomaps.ParseStatus("status.dat1")
+	sdata := nagtomaps.ParseStatus("status.dat")
 	// status.dat is the file from nagios
 	fmt.Println(sdata.Infostatuslist)
 	//print maps

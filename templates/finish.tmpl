@@ -1,0 +1,54 @@
+<html>
+<head>
+	<meta http-equiv="refresh" content="5;url=/status">
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+		<script language="javascript">
+			var max_time = 5;
+			var cinterval;
+ 
+			function countdown_timer(){
+
+  				max_time--;
+  				document.getElementById('countdown').innerHTML = max_time;
+  				if(max_time == 0){
+    				clearInterval(cinterval);
+  				}
+			}
+
+			cinterval = setInterval('countdown_timer()', 1000);
+		</script>
+
+		<style>
+		#line {
+			color: red;
+			text-align: center;
+		}
+		#lin {
+			color: red;
+		}
+		</style>
+
+	<title>Nagctl Exec finishing</title>
+</head>
+<body>
+
+<h1>Thanks to Sieg!</h1> 
+<h3>Problem(s) in</h3>
+<h4><p id="lin">{{.Ackall}} {{.Hosts}} {{.Services}}</p></h4>
+<h3>has/have been acknowledged!</h3>
+
+
+<br>
+<br>
+
+<h4 id="line"><span id="countdown">5</span> seconds for nagios propagting and redirecting you back</h5>
+</body>
+</html>

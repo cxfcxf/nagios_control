@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+		<meta http-equiv="refresh" content="30">
+
+		<style>
+		.btn-xlarge {
+    		padding: 18px 28px;
+    		font-size: 30px;
+    		line-height: normal;
+    		-webkit-border-radius: 10px;
+       			-moz-border-radius: 10px;
+            	border-radius: 10px;
+    	}
+
+    	body {
+    		padding: 1.5em;
+    	}
+    	</style>
+
+	<title>Nagctl status</title>
+
+	</head>
+	<body>
+
+	{{if or .Servers_have_problem .Services_have_problem}}
+		<form method="POST">
+			<div class="span2">
+				<button type="submit" name="ackall" value="{{.}}" class="btn btn-xlarge btn-danger btn-block"><span class="glyphicon glyphicon-ok">Acknowledge All</span></button>
+			</div>
+		</form>
+	{{else}}
+		<center><h1>Nothing to Acknowledge, YOLO!</h1></center>
+		<br>
+		<center><h6>This page will refresh automatically every 30 seconds</h6></center>
+	{{end}}
+
+	{{if .Servers_have_problem}}
+		<center><h1>following servers are experiencing errors</h1></center>
+
+
+		{{range .Servers_have_problem}}
+			<form method="POST">
+				<div class="span2">
+					<button type="submit" name="hosts" value="{{.}}" class="btn btn-xlarge btn-danger btn-block"><span class="glyphicon glyphicon-ok">Acknowledge {{.}}</span></button>
+				</div>
+				<br>
+			</form>
+		{{end}}
+
+	{{end}}
+
+	{{if .Services_have_problem}}
+		<center><h1>following services are experiencing errors</h1></center>	
+
+		{{range $key, $val := .Services_have_problem}}
+			{{range $sev := $val}}
+				<form method="POST">
+					<div class="span2">
+						<button type="submit" name="services" value="{{$key}} {{$sev}}" class="btn btn-xlarge btn-danger btn-block"><span class="glyphicon glyphicon-ok">Acknowledge {{$key}} {{$sev}}</span></button>
+					</div>
+					<br>
+				</form>
+			{{end}}
+		{{end}}
+	{{end}}
+
+	</body>
+
+</html>
