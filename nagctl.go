@@ -50,9 +50,10 @@ func getStatus(sfile string) Dstatus{
 		}
 	}
 
-	//hosts notification enabled
+	//hosts enabled
 	for _, server := range sdata.Hoststatuslist {
-		if  server["acknowledgement_type"] == "0" {
+		if  (server["acknowledgement_type"] != "0" && server["current_state"] != "0") || (server["notifications_enabled"] == "0" && server["current_state"] != "0") {
+		} else {
 			dstatus.Servers_enabled = append(dstatus.Servers_enabled, server["host_name"])
 		}
 	}
@@ -68,12 +69,13 @@ func getStatus(sfile string) Dstatus{
 		}
 	}
 
-	//services notification enable
+	//services enabled
 	dstatus.Services_enabled = make(map[string][]string)
 
 	for _, serverserv := range sdata.Servicestatuslist {
 		for _, service := range serverserv {
-			if service["acknowledgement_type"] == "0" {
+			if (service["acknowledgement_type"] != "0" && service["current_state"] != "0") || (service["notifications_enabled"] == "0" && service["current_state"] != "0") {
+			} else {
 				dstatus.Services_enabled[service["host_name"]] = append(dstatus.Services_enabled[service["host_name"]], service["service_description"])
 			}
 		}
@@ -93,11 +95,11 @@ func stringInSlice(a string, list []string) bool {
 
 func nagiosExec(host string, service string,  efile string) {
 	if host != "" && service == "" {
-		command := fmt.Sprintf("/bin/echo \"[%d] ACKNOWLEDGE_HOST_PROBLEM;%s;2;1;0;admin;acknowledged by nagctl webui\n\" > %s", time.Now().Unix(), host, efile)
+		command := fmt.Sprintf("/bin/echo \"[%d] ACKNOWLEDGE_HOST_PROBLEM;%s;2;1;0;admin;acknowledged by nagctl webui\n\" >> %s", time.Now().Unix(), host, efile)
 		cmd := exec.Command("sh", "-c", command)
 		if err := cmd.Run() ; err != nil {panic(err)}
 	} else {
-		command := fmt.Sprintf("/bin/echo \"[%d] ACKNOWLEDGE_SVC_PROBLEM;%s;%s;2;1;0;admin;acknowledged by nagctl webui\n\" > %s", time.Now().Unix(), host, service, efile)
+		command := fmt.Sprintf("/bin/echo \"[%d] ACKNOWLEDGE_SVC_PROBLEM;%s;%s;2;1;0;admin;acknowledged by nagctl webui\n\" >> %s", time.Now().Unix(), host, service, efile)
 		cmd := exec.Command("sh", "-c", command)
 		if err := cmd.Run() ; err != nil {panic(err)}
 	}
@@ -113,7 +115,7 @@ func nagiosExecCtl(execute string, hosts string, services string, ds Dstatus, ef
 		for host, secs := range ds.Services_enabled {
 			for _, service := range secs {
 				if h.MatchString(host) && s.MatchString(service) {
-					command := fmt.Sprintf("/bin/echo \"[%d] %s_SVC_NOTIFICATIONS;%s;%s\n\" > %s", time.Now().Unix(), exe, host, service, efile)
+					command := fmt.Sprintf("/bin/echo \"[%d] %s_SVC_NOTIFICATIONS;%s;%s\n\" >> %s", time.Now().Unix(), exe, host, service, efile)
 					cmd := exec.Command("sh", "-c", command)
 					if err := cmd.Run() ; err != nil {panic(err)}
 				}
@@ -124,10 +126,10 @@ func nagiosExecCtl(execute string, hosts string, services string, ds Dstatus, ef
 
 		for _, host := range ds.Servers_enabled {
 			if h.MatchString(host) {
-				command := fmt.Sprintf("/bin/echo \"[%d] %s_HOST_NOTIFICATIONS;%s\n\" > %s", time.Now().Unix(), exe, host, efile)
+				command := fmt.Sprintf("/bin/echo \"[%d] %s_HOST_NOTIFICATIONS;%s\n\" >> %s", time.Now().Unix(), exe, host, efile)
 				cmd := exec.Command("sh", "-c", command)
 				if err := cmd.Run() ; err != nil {panic(err)}
-				command = fmt.Sprintf("/bin/echo \"[%d] %s_HOST_SVC_NOTIFICATIONS;%s\n\" > %s", time.Now().Unix(), exe, host, efile)
+				command = fmt.Sprintf("/bin/echo \"[%d] %s_HOST_SVC_NOTIFICATIONS;%s\n\" >> %s", time.Now().Unix(), exe, host, efile)
 				cmd = exec.Command("sh", "-c", command)
 				if err := cmd.Run() ; err != nil {panic(err)}
 			}
@@ -138,7 +140,7 @@ func nagiosExecCtl(execute string, hosts string, services string, ds Dstatus, ef
 		for host, secs := range ds.Services_enabled {
 			for _, service := range secs {
 				if s.MatchString(service) {
-					command := fmt.Sprintf("/bin/echo \"[%d] %s_SVC_NOTIFICATIONS;%s;%s\n\" > %s", time.Now().Unix(), exe, host, service, efile)
+					command := fmt.Sprintf("/bin/echo \"[%d] %s_SVC_NOTIFICATIONS;%s;%s\n\" >> %s", time.Now().Unix(), exe, host, service, efile)
 					cmd := exec.Command("sh", "-c", command)
 					if err := cmd.Run() ; err != nil {panic(err)}
 				}
