@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"flag"
 	"time"
 	"strings"
 	"regexp"
@@ -11,12 +10,8 @@ import (
 	"github.com/martini-contrib/render"
 	"github.com/martini-contrib/binding"
 	"github.com/martini-contrib/auth"
+	"github.com/vaughan0/go-ini"
 	"github.com/cxfcxf/nagtomaps"
-)
-
-var (
-	sfile = flag.String("sfile", "", "path to the status.dat file nagios create")
-	efile = flag.String("efile", "", "path to nagios external command file nagios.cmd")
 )
 
 type DataPost struct {
@@ -36,6 +31,17 @@ type Dstatus struct {
 	Services_have_problem	map[string][]string
 	Servers_enabled			[]string
 	Services_enabled		map[string][]string
+}
+
+func iniParser(inifile string) (string, string, string, string, string) {
+	f, err := ini.LoadFile(inifile)
+	if err != nil {panic(err)}
+	authname, _ := f.Get("authlogin", "username")
+	authpass, _ := f.Get("authlogin", "password")
+	port, _ := f.Get("listen", "port")
+	sfile, _ := f.Get("files", "sfile")
+	efile, _ := f.Get("files", "efile")
+	return authname, authpass, port, sfile, efile
 }
 
 func getStatus(sfile string) Dstatus{
@@ -150,42 +156,42 @@ func nagiosExecCtl(execute string, hosts string, services string, ds Dstatus, ef
 }
 
 func main() {
-	flag.Parse()
+	authname, authpass, port, sfile, efile := iniParser("nagctl.ini")
 
 	m := martini.Classic()
 
 	m.Use(render.Renderer())
 
-	m.Use(auth.Basic("username", "password"))
+	m.Use(auth.Basic(authname, authpass))
 
 	m.Get("/", func() string {
 		return "you are hiting the webroot directory! please use /status or /nagctl"	
 	})
 
 	m.Get("/status", func(r render.Render) {
-		ds := getStatus(*sfile)
+		ds := getStatus(sfile)
 		r.HTML(200, "status", ds)
 	})
 
 	m.Post("/status", binding.Bind(AckPost{}), func(ap AckPost, r render.Render) {
 		if ap.Ackall == "notempty" {
-			ds := getStatus(*sfile)
+			ds := getStatus(sfile)
 			for _, s := range ds.Servers_have_problem {
-				go nagiosExec(s, "", *efile)
+				go nagiosExec(s, "", efile)
 			}
 			for sr, svs := range ds.Services_have_problem {
 				if !stringInSlice(sr, ds.Servers_have_problem) {
 					for _, sev := range svs {
-						go nagiosExec(sr, sev, *efile)
+						go nagiosExec(sr, sev, efile)
 					}
 				}
 			}
 			ap.Ackall = fmt.Sprintf("Servers: ==> %s\n Services: ==> %s\n", ds.Servers_have_problem, ds.Services_have_problem)
 		} else if ap.Hosts != "" {
-			go nagiosExec(ap.Hosts, "", *efile)
+			go nagiosExec(ap.Hosts, "", efile)
 		} else {
 			hslist := strings.Split(ap.Services, " ")
-			go nagiosExec(hslist[0], hslist[1], *efile)
+			go nagiosExec(hslist[0], hslist[1], efile)
 		}
 		r.HTML(200, "finish", ap)
 	})
@@ -195,12 +201,12 @@ func main() {
 	})
 
 	m.Post("/nagctl", binding.Bind(DataPost{}), func(dp DataPost, r render.Render) {
-		ds := getStatus(*sfile)
-		nagiosExecCtl(dp.Exec, dp.Hosts, dp.Services, ds, *efile)
+		ds := getStatus(sfile)
+		nagiosExecCtl(dp.Exec, dp.Hosts, dp.Services, ds, efile)
 		command := fmt.Sprintf("Executed --> Exec: %s  Hosts: %s  services: %s \n",
 			dp.Exec, dp.Hosts, dp.Services)
 		r.HTML(200, "nagfin", command)
 	})
 
-	m.RunOnAddr(":3333")
+	m.RunOnAddr(port)
 }

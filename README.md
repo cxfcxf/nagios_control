@@ -6,16 +6,16 @@ unlike the original nagios webui, nagctl.go can be used as an addon for nagios
 
 ```
 usage:
-	go run nagctl.go -sfile status.dat -efile nagios.cmd
+	go run nagctl.go
 ```
 
-### this will start a web server on your port :3333 , default login is username. password.
+### update iniParser, setting is now on nagctl.ini. its pretty self-explain
 
 it has two sub directory
 
 ```
 /status
-for quick acknowledge alert (mobile device compatiable
+for quick acknowledge alert (mobile device compatiable)
 
 /nagctl
 you can use regex to point the server or service you would like to mute/unmute alert for
@@ -23,7 +23,7 @@ you can use regex to point the server or service you would like to mute/unmute a
 
 ### future
 
-would put all those config into a ini file. and you set stuff there.
+add more functions and create a dashboard for desktop browser
 
 if you have any other suggestion please let me know
 siegfried.chen@gmail.com
