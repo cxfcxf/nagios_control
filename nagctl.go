@@ -52,7 +52,7 @@ func getStatus(sfile string) Dstatus{
 
 	//hosts notification enabled
 	for _, server := range sdata.Hoststatuslist {
-		if  server["notifications_enabled"] == "1" && server["acknowledgement_type"] == "0" {
+		if  server["acknowledgement_type"] == "0" {
 			dstatus.Servers_enabled = append(dstatus.Servers_enabled, server["host_name"])
 		}
 	}
@@ -73,7 +73,7 @@ func getStatus(sfile string) Dstatus{
 
 	for _, serverserv := range sdata.Servicestatuslist {
 		for _, service := range serverserv {
-			if service["notifications_enabled"] == "1" && service["acknowledgement_type"] == "0" {
+			if service["acknowledgement_type"] == "0" {
 				dstatus.Services_enabled[service["host_name"]] = append(dstatus.Services_enabled[service["host_name"]], service["service_description"])
 			}
 		}
