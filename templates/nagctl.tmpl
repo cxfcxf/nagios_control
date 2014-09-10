@@ -21,13 +21,21 @@
 	</head>
 
 	<div class="formcss">
-		<h1>Welcome to Nagctl Webservice<h1>
+		<h1>Welcome to Nagctl Webservice</h1>
+
+		<br>
+
+		<h5>support regex in server name and service name</h5>
+		<p>please use strict regex</p>
+		<br>
 
 		<form class="form-inline" rolse="form" method="POST">
 			<div class="form-group">
-    			<label class="sr-only" for="Execution">Exec</label>
-    			<input type="text" name="exec" class="form-control" placeholder="Mute/Unmute">
-  			 </div>
+				<select class="form-control" name="exec">
+					<option value="enable">Enable</option>
+					<option value="disable">Disable</option>
+				</select>
+    		</div>
 
 			 <div class="form-group">
     			<label class="sr-only" for="Hosts">Hosts</label>
@@ -39,7 +47,9 @@
     			<input type="text" name="services" class="form-control" placeholder="Enter Services">
   			</div>
 
-  			<button type="submit" class="btn btn-primary">Submit</button>
+  			<div class="form-group">
+  				<button type="submit" class="btn btn-primary">Submit</button>
+  			</div>
     	</form>
 	</div>
 </html>

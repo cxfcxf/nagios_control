@@ -1,43 +1,29 @@
 # nagctl
 
-a nagios cli control tool for nagios.cmd.
-it can mute single or all hosts and services. will only take effect on hosts with OK status
+## This is a nagios control web interface
 
-##### pro:
-This tool dose not require dependency what so ever as long as you are using bash!.
-
-##### con:
-result output part may not as good as other tool which can access json or print lib
-
-##### before use:
-change the location in script to wherever your nagios.cmd and status.dat are at
+unlike the original nagios webui, nagctl.go can be used as an addon for nagios
 
 ```
-###############################################################################################
-script will disable or enable notification for your hosts or services on nagios
-if only services are pointed, script will use status.dat info to get all hosts 
-
-Returns:
-enable  -> 1
-disable -> 0
-
-current_state ->  0  => OK
-current_state ->  1  => WARNING
-current_state ->  2  => CRITICAL
-
-example: nagctl -e list -h hosts
-         nagctl -e enable -h hosts -s services
-         nagctl -e diable -h hosts
-         nagctl -e enable -s services  (this will only take effect on all hosts with OK status)
-
-notice: you can only use bash regex to discribe your hosts or services
-		host -->> "edge{12,13}-dal" or "edge{12..20}-dal" with double quote
-		service -->> "{LOGCHUTE,HTTP,WRITES}  case sensitive
-###############################################################################################
+usage:
+	go run nagctl.go -sfile status.dat -efile nagios.cmd
 ```
 
-### future plan:
+### this will start a web server on your port :3333 , default login is username. password.
 
-more clear output
+it has two sub directory
 
-add check function to script
+```
+/status
+for quick acknowledge alert (mobile device compatiable
+
+/nagctl
+you can use regex to point the server or service you would like to mute/unmute alert for
+```
+
+### future
+
+would put all those config into a ini file. and you set stuff there.
+
+if you have any other suggestion please let me know
+siegfried.chen@gmail.com
