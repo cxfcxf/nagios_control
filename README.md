@@ -19,6 +19,8 @@ for quick acknowledge alert (mobile device compatiable)
 
 /nagctl
 you can use regex to point the server or service you would like to mute/unmute alert for
+
+if you submit without host and service, keep exec enable it will clean false mute
 ```
 
 ### future

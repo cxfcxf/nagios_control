@@ -31,6 +31,8 @@ type Dstatus struct {
 	Services_have_problem	map[string][]string
 	Servers_enabled			[]string
 	Services_enabled		map[string][]string
+	Servers_ok_disabled		[]string
+	Services_ok_disabled 	map[string][]string
 }
 
 func iniParser(inifile string) (string, string, string, string, string) {
@@ -64,6 +66,13 @@ func getStatus(sfile string) Dstatus{
 		}
 	}
 
+	//host ok disabled
+	for _, server := range sdata.Hoststatuslist {
+		if  server["current_state"] == "0" && server["notifications_enabled"] == "0" {
+			dstatus.Servers_ok_disabled = append(dstatus.Servers_ok_disabled, server["host_name"])
+		}
+	}
+
 	//services have problem
 	dstatus.Services_have_problem = make(map[string][]string)
 
@@ -83,6 +92,17 @@ func getStatus(sfile string) Dstatus{
 			if (service["acknowledgement_type"] != "0" && service["current_state"] != "0") || (service["notifications_enabled"] == "0" && service["current_state"] != "0") {
 			} else {
 				dstatus.Services_enabled[service["host_name"]] = append(dstatus.Services_enabled[service["host_name"]], service["service_description"])
+			}
+		}
+	}
+
+	//services ok disabled
+	dstatus.Services_ok_disabled = make(map[string][]string)
+
+	for _, serverserv := range sdata.Servicestatuslist {
+		for _, service := range serverserv {
+			if service["current_state"] == "0" && service["notifications_enabled"] == "0" {
+				dstatus.Services_ok_disabled[service["host_name"]] = append(dstatus.Services_ok_disabled[service["host_name"]], service["service_description"])
 			}
 		}
 	}
@@ -150,6 +170,20 @@ func nagiosExecCtl(execute string, hosts string, services string, ds Dstatus, ef
 					cmd := exec.Command("sh", "-c", command)
 					if err := cmd.Run() ; err != nil {panic(err)}
 				}
+			}
+		}
+	} else if hosts == "" && services == "" {
+		for _, host := range ds.Servers_ok_disabled {
+				command := fmt.Sprintf("/bin/echo \"[%d] %s_HOST_NOTIFICATIONS;%s\n\" > %s", time.Now().Unix(), exe, host, efile)
+				cmd := exec.Command("sh", "-c", command)
+				if err := cmd.Run() ; err != nil {panic(err)}
+		}
+
+		for host, secs := range ds.Services_ok_disabled {
+			for _, service := range secs {
+				command := fmt.Sprintf("/bin/echo \"[%d] %s_SVC_NOTIFICATIONS;%s;%s\n\" > %s", time.Now().Unix(), exe, host, service, efile)
+				cmd := exec.Command("sh", "-c", command)
+				if err := cmd.Run() ; err != nil {panic(err)}
 			}
 		}
 	}
